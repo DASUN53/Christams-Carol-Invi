@@ -3,9 +3,949 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Celestia - Carol Cart 2025</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Georgia", serif;
+        background-color: #f8f5f0;
+        color: #2d3436;
+        line-height: 1.6;
+        overflow-x: hidden;
+      }
+
+      /* Hero Section with Slider */
+      .hero {
+        position: relative;
+        height: 100vh;
+        min-height: 500px;
+        overflow: hidden;
+        background-color: #1a3a1a;
+      }
+
+      /* Canvas for snow effect */
+      #snow-canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        width: 100%;
+        height: 100%;
+        z-index: 15;
+      }
+
+      .slider {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+
+      .slide {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        transition: opacity 1.5s ease-in-out;
+      }
+
+      .slide.active {
+        opacity: 1;
+      }
+
+      .slide img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: brightness(0.7);
+      }
+
+      .hero-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          rgba(26, 58, 26, 0.6),
+          rgba(139, 0, 0, 0.4)
+        );
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 20px;
+        z-index: 10;
+      }
+
+      .hero-content h1 {
+        font-size: 4rem;
+        color: #fff;
+        margin-bottom: 20px;
+        text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+      }
+
+      .hero-content h2 {
+        font-size: 2.5rem;
+        color: white;
+        margin-bottom: 15px;
+        text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7);
+      }
+
+      .hero-content p {
+        font-size: 1.3rem;
+        color: #f0e6d2;
+        margin-bottom: 30px;
+        text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+      }
+
+      /* Countdown Timer */
+      .countdown-container {
+        margin-top: 20px;
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .countdown-box {
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        padding: 15px 25px;
+        border-radius: 10px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        min-width: 80px;
+      }
+
+      .countdown-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #fff;
+        display: block;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      }
+
+      .countdown-label {
+        font-size: 0.9rem;
+        color: #f0e6d2;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .slider-dots {
+        position: absolute;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 12px;
+        z-index: 20;
+      }
+
+      .dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .dot.active {
+        background-color: #fff;
+        transform: scale(1.3);
+      }
+
+      /* Theme Section */
+      .theme-section {
+        background: white;
+        color: rgb(0, 0, 0);
+        padding: 80px 20px;
+        text-align: center;
+      }
+
+      .theme-section h2 {
+        font-size: 2.8rem;
+        margin-bottom: 20px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .theme-section p {
+        font-size: 1.2rem;
+        max-width: 800px;
+        margin: 0 auto;
+        line-height: 1.8;
+        color: #535353;
+      }
+
+      /* Event Details Section */
+      .event-details {
+        max-width: 1000px;
+        margin: 80px auto;
+        padding: 0 20px;
+      }
+
+      .section-title {
+        text-align: center;
+        font-size: 2.5rem;
+        color: #8b0000;
+        margin-bottom: 50px;
+        position: relative;
+      }
+
+      .section-title::after {
+        content: "";
+        display: block;
+        width: 80px;
+        height: 3px;
+        background-color: #1a5a1a;
+        margin: 15px auto 0;
+      }
+
+      .invitation-message {
+        text-align: center;
+        font-size: 1.2rem;
+        color: #555;
+        margin-bottom: 50px;
+        line-height: 1.8;
+        font-style: italic;
+      }
+
+      .details-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 30px;
+        margin-top: 40px;
+      }
+
+      .detail-card {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease;
+        text-align: center;
+        opacity: 0;
+        transform: translateY(50px);
+      }
+
+      .detail-card.visible {
+        opacity: 1;
+        transform: translateY(0);
+        transition:
+          opacity 0.6s ease,
+          transform 0.6s ease;
+      }
+
+      .detail-card:hover {
+        transform: translateY(-10px) scale(1.05) !important;
+        box-shadow: 0 8px 25px rgba(139, 0, 0, 0.3);
+      }
+
+      .detail-card h3 {
+        color: #1a5a1a;
+        font-size: 1.3rem;
+        margin-bottom: 15px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .detail-card p {
+        color: #666;
+        font-size: 1.1rem;
+        line-height: 1.6;
+      }
+
+      .detail-icon {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+        color: #8b0000;
+        animation: float 3s ease-in-out infinite;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+      }
+
+      /* Gallery Section */
+      .gallery-section {
+        background: #fff;
+        padding: 80px 20px;
+      }
+
+      .gallery-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        overflow: hidden;
+      }
+
+      .gallery-slider {
+        display: flex;
+        gap: 20px;
+        animation: scroll 20s linear infinite;
+      }
+
+      .gallery-slider:hover {
+        animation-play-state: paused;
+      }
+
+      .gallery-item {
+        min-width: 300px;
+        height: 250px;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease;
+      }
+
+      .gallery-item:hover {
+        transform: scale(1.05);
+      }
+
+      .gallery-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      @keyframes scroll {
+        0% {
+          transform: translateX(0);
+        }
+        100% {
+          transform: translateX(-50%);
+        }
+      }
+
+      /* CTA Section */
+      .cta-section {
+        background: #faf7f2;
+        color: rgb(0, 0, 0);
+        padding: 60px 20px;
+        text-align: center;
+      }
+
+      .cta-section h2 {
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+      }
+
+      .cta-section p {
+        font-size: 1.2rem;
+        margin-bottom: 30px;
+        color: #585858;
+      }
+
+      .cta-buttons {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .cta-button {
+        padding: 15px 35px;
+        font-size: 1.1rem;
+        border: none;
+        border-radius: 30px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: bold;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      .cta-button.primary {
+        background: white;
+        color: #8b0000;
+      }
+
+      .cta-button.primary:hover {
+        transform: scale(1.1);
+        box-shadow: 0 5px 20px rgba(255, 255, 255, 0.4);
+      }
+
+      .cta-button.secondary {
+        background: transparent;
+        color: white;
+        border: 2px solid white;
+      }
+
+      .cta-button.secondary:hover {
+        background: white;
+        color: #8b0000;
+      }
+
+      /* Footer */
+      footer {
+        background: linear-gradient(135deg, #1a3a1a 0%, #8b0000 100%);
+        color: #f0e6d2;
+        text-align: center;
+        padding: 60px 20px 30px;
+      }
+
+      .footer-content {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .footer-logo {
+        margin-bottom: 25px;
+      }
+
+      .footer-logo img {
+        height: 80px;
+        width: auto;
+        filter: brightness(0) invert(1);
+        opacity: 0.9;
+      }
+
+      .footer-title {
+        font-size: 1.3rem;
+        font-weight: bold;
+        letter-spacing: 0.5px;
+        margin-bottom: 30px;
+        color: #fff;
+      }
+
+      .footer-social {
+        display: flex;
+        gap: 25px;
+        justify-content: center;
+        margin: 30px 0;
+      }
+
+      .social-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 50px;
+        height: 50px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        color: #fff;
+        font-size: 1.5rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .social-link:hover {
+        transform: translateY(-5px) scale(1.1);
+        background: rgba(255, 255, 255, 0.25);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      }
+
+      .footer-greeting {
+        margin-top: 30px;
+        font-style: italic;
+        font-size: 1rem;
+        opacity: 0.9;
+      }
+
+      .footer-divider {
+        height: 1px;
+        background: rgba(255, 255, 255, 0.2);
+        margin: 25px auto;
+        max-width: 300px;
+      }
+
+      .footer-copyright {
+        font-size: 0.9rem;
+        opacity: 0.7;
+        margin-top: 20px;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .hero-content h1 {
+          font-size: 3rem;
+        }
+        .hero-content h2 {
+          font-size: 2rem;
+        }
+        .hero-content p {
+          font-size: 1.1rem;
+        }
+        .countdown-box {
+          min-width: 60px;
+          padding: 10px 15px;
+        }
+        .countdown-number {
+          font-size: 1.8rem;
+        }
+        .section-title {
+          font-size: 2rem;
+        }
+        .theme-section h2 {
+          font-size: 2rem;
+        }
+        .details-grid {
+          grid-template-columns: 1fr;
+          gap: 20px;
+        }
+        .gallery-item {
+          min-width: 250px;
+          height: 200px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .hero {
+          height: 60vh;
+        }
+        .hero-content h1 {
+          font-size: 2.5rem;
+        }
+        .hero-content h2 {
+          font-size: 1.5rem;
+        }
+        .countdown-container {
+          gap: 10px;
+        }
+        .detail-card {
+          padding: 20px;
+        }
+        .cta-buttons {
+          flex-direction: column;
+          align-items: center;
+        }
+      }
+    </style>
   </head>
   <body>
-    <p>Hello</p>
+    <!-- Hero Section with Image Slider -->
+    <section class="hero">
+      <canvas id="snow-canvas"></canvas>
+      <div class="slider">
+        <div class="slide active">
+          <img src="./Assets/Hero1.jpeg" alt="Christmas Carol 1" />
+        </div>
+        <div class="slide">
+          <img src="./Assets/Hero2.jpeg" alt="Christmas Carol 2" />
+        </div>
+        <div class="slide">
+          <img src="./Assets/Hero3.jpeg" alt="Christmas Carol 3" />
+        </div>
+        <div class="slide">
+          <img src="./Assets/Hero4.jpeg" alt="Christmas Carol 4" />
+        </div>
+      </div>
+
+      <div class="hero-overlay">
+        <div class="hero-content">
+          <h1 id="typing-text"></h1>
+          <h2>Carol Cart - 2025</h2>
+          <p>Join us in celebrating the spirit of Christmas</p>
+
+          <!-- Countdown Timer -->
+          <div class="countdown-container">
+            <div class="countdown-box">
+              <span class="countdown-number" id="days">00</span>
+              <span class="countdown-label">Days</span>
+            </div>
+            <div class="countdown-box">
+              <span class="countdown-number" id="hours">00</span>
+              <span class="countdown-label">Hours</span>
+            </div>
+            <div class="countdown-box">
+              <span class="countdown-number" id="minutes">00</span>
+              <span class="countdown-label">Minutes</span>
+            </div>
+            <div class="countdown-box">
+              <span class="countdown-number" id="seconds">00</span>
+              <span class="countdown-label">Seconds</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="slider-dots">
+        <span class="dot active" onclick="currentSlide(0)"></span>
+        <span class="dot" onclick="currentSlide(1)"></span>
+        <span class="dot" onclick="currentSlide(2)"></span>
+        <span class="dot" onclick="currentSlide(3)"></span>
+      </div>
+    </section>
+
+    <!-- Theme Section -->
+    <section class="theme-section">
+      <h2>🎄 Theme of 2025: Celestia – Songs of Joy & Light</h2>
+      <p>
+        This year's celebration embraces the heavenly beauty of Christmas
+        through music that illuminates hearts. Celestia represents the celestial
+        harmony of carols that bring communities together, spreading peace,
+        love, and joy under the stars of the holy season. Join us as we lift our
+        voices in praise and gratitude.
+      </p>
+    </section>
+
+    <!-- Event Details Section -->
+    <section class="event-details">
+      <h2 class="section-title">Event Details</h2>
+
+      <div class="invitation-message">
+        <p>
+          We warmly invite you to join us for an evening of joyful celebration
+          and heartfelt carol singing. Come together with fellow students and
+          experience the true spirit of Christmas through music, fellowship, and
+          shared blessings. Your presence will make this celebration even more
+          special!
+        </p>
+      </div>
+
+      <div class="details-grid">
+        <div class="detail-card">
+          <div class="detail-icon">📅</div>
+          <h3>Date</h3>
+          <p>December 09, 2025</p>
+        </div>
+
+        <div class="detail-card">
+          <div class="detail-icon">🕐</div>
+          <h3>Time</h3>
+          <p>5:00 PM - 9:00 PM</p>
+        </div>
+
+        <div class="detail-card">
+          <div class="detail-icon">📍</div>
+          <h3>Venue</h3>
+          <p>University Main Auditorium<br />Sabaragamuwa University</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section class="gallery-section">
+      <h2 class="section-title">Memories from Past Celebrations</h2>
+      <div class="gallery-container">
+        <div class="gallery-slider">
+          <div class="gallery-item">
+            <img src="./Assets/Hero1.jpeg" alt="Past Event 1" />
+          </div>
+          <div class="gallery-item">
+            <img src="./Assets/Hero2.jpeg" alt="Past Event 2" />
+          </div>
+          <div class="gallery-item">
+            <img src="./Assets/Hero3.jpeg" alt="Past Event 3" />
+          </div>
+          <div class="gallery-item">
+            <img src="./Assets/Hero4.jpeg" alt="Past Event 4" />
+          </div>
+          <!-- Duplicate for seamless loop -->
+          <div class="gallery-item">
+            <img src="./Assets/Hero1.jpeg" alt="Past Event 1" />
+          </div>
+          <div class="gallery-item">
+            <img src="./Assets/Hero2.jpeg" alt="Past Event 2" />
+          </div>
+          <div class="gallery-item">
+            <img src="./Assets/Hero3.jpeg" alt="Past Event 3" />
+          </div>
+          <div class="gallery-item">
+            <img src="./Assets/Hero4.jpeg" alt="Past Event 4" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+      <h2>⭐ Reserve Your Spot</h2>
+      <p>Don't miss this magical evening of carols and fellowship!</p>
+      <div class="cta-buttons">
+        <a
+          href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Celestia+-+Carol+Cart+2025&dates=20251209T170000/20251209T210000&details=Join+us+for+an+evening+of+joyful+celebration+and+heartfelt+carol+singing&location=University+Main+Auditorium,+Sabaragamuwa+University"
+          target="_blank"
+          class="cta-button primary"
+          >📅 Add to Calendar</a
+        >
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <div class="footer-content">
+        <div class="footer-logo">
+          <img
+            src="./Assets/logo.png"
+            alt="CCM Logo"
+            onerror="this.style.display='none'"
+          />
+        </div>
+
+        <p class="footer-title">
+          Catholic and Christian Movement<br />
+          Sabaragamuwa University of Sri Lanka
+        </p>
+
+        <div class="footer-social">
+          <a
+            href="https://www.facebook.com"
+            target="_blank"
+            class="social-link"
+            title="Facebook"
+            aria-label="Facebook"
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"
+              />
+            </svg>
+          </a>
+          <a
+            href="https://www.instagram.com"
+            target="_blank"
+            class="social-link"
+            title="Instagram"
+            aria-label="Instagram"
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"
+              />
+            </svg>
+          </a>
+          <a
+            href="https://wa.me/"
+            target="_blank"
+            class="social-link"
+            title="WhatsApp"
+            aria-label="WhatsApp"
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"
+              />
+            </svg>
+          </a>
+        </div>
+
+        <p class="footer-greeting">
+          "Wishing you peace, love, and joy this Christmas season."
+        </p>
+
+        <div class="footer-divider"></div>
+
+        <p class="footer-copyright">
+          © 2025 CCM - Sabaragamuwa University. All rights reserved.
+        </p>
+      </div>
+    </footer>
+
+    <script>
+      // Image Slider
+      let slideIndex = 0;
+      let slides = document.querySelectorAll(".slide");
+      let dots = document.querySelectorAll(".dot");
+      let slideInterval;
+
+      function showSlide(n) {
+        slides.forEach((slide) => slide.classList.remove("active"));
+        dots.forEach((dot) => dot.classList.remove("active"));
+
+        if (n >= slides.length) {
+          slideIndex = 0;
+        } else if (n < 0) {
+          slideIndex = slides.length - 1;
+        } else {
+          slideIndex = n;
+        }
+
+        slides[slideIndex].classList.add("active");
+        dots[slideIndex].classList.add("active");
+      }
+
+      function nextSlide() {
+        showSlide(slideIndex + 1);
+      }
+
+      function currentSlide(n) {
+        clearInterval(slideInterval);
+        showSlide(n);
+        slideInterval = setInterval(nextSlide, 4000);
+      }
+
+      slideInterval = setInterval(nextSlide, 4000);
+      showSlide(0);
+
+      // Countdown Timer
+      const eventDate = new Date("December 09, 2025 17:00:00").getTime();
+
+      function updateCountdown() {
+        const now = new Date().getTime();
+        const distance = eventDate - now;
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor(
+          (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+        );
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        document.getElementById("days").textContent = days
+          .toString()
+          .padStart(2, "0");
+        document.getElementById("hours").textContent = hours
+          .toString()
+          .padStart(2, "0");
+        document.getElementById("minutes").textContent = minutes
+          .toString()
+          .padStart(2, "0");
+        document.getElementById("seconds").textContent = seconds
+          .toString()
+          .padStart(2, "0");
+
+        if (distance < 0) {
+          document.querySelector(".countdown-container").innerHTML =
+            "<p style='font-size: 1.5rem;'>Event is Live! 🎉</p>";
+        }
+      }
+
+      setInterval(updateCountdown, 1000);
+      updateCountdown();
+
+      // Snow effect
+      const canvas = document.getElementById("snow-canvas");
+      const ctx = canvas.getContext("2d");
+      let width, height;
+      let snowflakes = [];
+
+      function resizeCanvas() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+      }
+
+      function createSnowflakes() {
+        const flakeCount = window.innerWidth < 480 ? 50 : 100;
+        snowflakes = [];
+        for (let i = 0; i < flakeCount; i++) {
+          snowflakes.push({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            radius: Math.random() * 3 + 1,
+            density: Math.random() * flakeCount,
+            speedY: Math.random() * 1 + 0.5,
+            speedX: Math.random() * 0.5 - 0.25,
+          });
+        }
+      }
+
+      function drawSnowflakes() {
+        ctx.clearRect(0, 0, width, height);
+        ctx.fillStyle = "white";
+        ctx.beginPath();
+        for (let flake of snowflakes) {
+          ctx.moveTo(flake.x, flake.y);
+          ctx.arc(flake.x, flake.y, flake.radius, 0, Math.PI * 2);
+        }
+        ctx.fill();
+      }
+
+      let angle = 0;
+
+      function updateSnowflakes() {
+        angle += 0.01;
+        for (let flake of snowflakes) {
+          flake.y += flake.speedY;
+          flake.x += Math.sin(angle + flake.density) * flake.speedX;
+
+          if (flake.y > height) {
+            flake.y = -flake.radius;
+            flake.x = Math.random() * width;
+          }
+          if (flake.x > width) {
+            flake.x = 0;
+          } else if (flake.x < 0) {
+            flake.x = width;
+          }
+        }
+      }
+
+      function animateSnow() {
+        drawSnowflakes();
+        updateSnowflakes();
+        requestAnimationFrame(animateSnow);
+      }
+
+      function initSnow() {
+        resizeCanvas();
+        createSnowflakes();
+        animateSnow();
+      }
+
+      window.addEventListener("resize", () => {
+        resizeCanvas();
+        createSnowflakes();
+      });
+
+      initSnow();
+
+      // Typing effect
+      const typingText = "Celestia ' 25";
+      const typingElement = document.getElementById("typing-text");
+      let charIndex = 0;
+
+      function type() {
+        if (charIndex < typingText.length) {
+          typingElement.textContent += typingText.charAt(charIndex);
+          charIndex++;
+          setTimeout(type, 150);
+        } else {
+          setTimeout(() => {
+            typingElement.textContent = "";
+            charIndex = 0;
+            type();
+          }, 1500);
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        type();
+      });
+
+      // Scroll effects
+      const heroOverlay = document.querySelector(".hero-overlay");
+
+      function animateOnScroll() {
+        let scrollY = window.scrollY;
+        let maxScroll = window.innerHeight;
+        let scrollProgress = Math.min(scrollY / maxScroll, 1);
+
+        heroOverlay.style.opacity = 1 - scrollProgress;
+        heroOverlay.style.transform = `translateY(-${scrollProgress * 50}px)`;
+
+        const detailCards = document.querySelectorAll(".detail-card");
+        detailCards.forEach((card, index) => {
+          const rect = card.getBoundingClientRect();
+          const windowHeight = window.innerHeight;
+
+          if (rect.top < windowHeight * 0.8) {
+            setTimeout(() => {
+              card.classList.add("visible");
+            }, index * 150);
+          }
+        });
+      }
+
+      window.addEventListener("scroll", animateOnScroll);
+      animateOnScroll();
+
+      document.documentElement.style.scrollBehavior = "smooth";
+    </script>
   </body>
 </html>
